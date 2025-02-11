@@ -1,0 +1,31 @@
+[project]
+name = "scratch-pydantic-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "alexcolemandata", email = "coleman.g.alex@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "basedpyright>=1.27.0",
+    "ollama>=0.4.7",
+    "openai>=1.61.1",
+    "pydantic-ai>=0.0.23",
+    "rich>=13.9.4",
+    "ruff>=0.9.6",
+]
+
+[project.scripts]
+scratch-pydantic-ai = "scratch_pydantic_ai:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "ipython>=8.32.0",
+    "pdbpp>=0.10.3",
+]
