@@ -16,6 +16,7 @@ HOST = "http://localhost:11434/v1/"
 
 MODEL_NAME = "llama3.1:8b"
 NUM_CHARACTERS = 5
+MAX_ATTEMPTS = 5
 
 client = OpenAI(api_key="ollama", base_url=HOST)
 
@@ -74,17 +75,29 @@ def main():
         table.add_column("Occupation", justify="right")
         table.add_column("Song", justify="right")
         table.add_column("Valid Name?", justify="right")
+        table.add_column("Attempts", justify="center")
 
         while len(characters) < NUM_CHARACTERS:
             names = [character.name for character in characters]
+            songs = [character.song for character in characters]
+            attempts = 0
+
             msg = "Generate me details of a significant historical figure"
             if names:
-                msg += " That isn't one of these: " + ",".join(
-                    f"'{name}'" for name in names
+                msg += ". Do not pick: " + ",".join(f"'{name}'" for name in names)
+            if songs:
+                msg += " Do not use these songs: " + ",".join(
+                    f"'{song}'" for song in songs
                 )
-            try:
-                result = character_agent.run_sync(msg).data
-            except UnexpectedModelBehavior as e:
+
+            while attempts < MAX_ATTEMPTS:
+                try:
+                    result = character_agent.run_sync(msg).data
+                except UnexpectedModelBehavior as e:
+                    attempts += 1
+                else:
+                    break
+            else:
                 continue
 
             try:
@@ -102,6 +115,7 @@ def main():
                 character.occupation or "…",
                 character.song or "…",
                 str(is_valid_name),
+                str(attempts),
             )
             live.update(table)
 
